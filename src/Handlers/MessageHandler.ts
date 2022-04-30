@@ -1,9 +1,8 @@
-import { MessageType, Mimetype } from '@adiwajshing/baileys/lib/WAConnection'
+
 import axios from 'axios'
 import chalk from 'chalk'
 import { join } from 'path'
 import BaseCommand from '../lib/BaseCommand'
-import request from '../lib/request'
 import WAClient from '../lib/WAClient'
 import { ICommand, IParsedArgs, ISimplifiedMessage } from "../typings";
 
@@ -30,9 +29,7 @@ export default class MessageHandler {
 				this.client.user.short ||
 				"Chitoge";
 		} else if (M.WAMessage.key.fromMe) return void null;
-		    if (M.chat === "dm") {
-			await this.client.blockUser(M.sender.jid)
-			 }
+
 		if (M.from.includes("status")) return void null;
 		const { args, groupMetadata, sender } = M;
 		if (M.chat === "dm" && this.client.isFeature("chatbot")) {
@@ -93,15 +90,11 @@ export default class MessageHandler {
 			)} from ${chalk.green(sender.username)} in ${chalk.cyanBright(
 				groupMetadata?.subject || "DM"
 			)}`
-		   );
-			if (!command)
-			return void M.reply( await request.buffer(`https://c.tenor.com/Lu60IPsXTZsAAAPo/majo-no-tabitabi-the-journey-of-elaina.mp4`),
-                    MessageType.video,
-                    Mimetype.gif,
-                    undefined,
-                    `No such command! Have you never seen someone use the command *${this.client.config.prefix}help*`,
-                    undefined
-                )
+		);
+		if (!command)
+			return void M.reply(
+				`No such command, Baka! Have you never seen someone use the command *${this.client.config.prefix}help*.`
+			);
 		const user = await this.client.getUser(M.sender.jid);
 		if (user.ban) return void M.reply("You're Banned from using commands.");
 		const state = await this.client.DB.disabledcommands.findOne({
@@ -123,7 +116,7 @@ export default class MessageHandler {
 		}
 		if (command.config?.adminOnly && !M.sender.isAdmin)
 			return void M.reply(
-				`Sorry this command is only meant for the group admins ask the Admin!`
+				`This command is only meant for the group admins, Baka!`
 			);
 		try {
 			await command.run(M, this.parseArgs(args));
